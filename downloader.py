@@ -1,4 +1,4 @@
-import requests, base64
+import requests, base64, time
 
 headers = {
   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:88.0) Gecko/20100101 Firefox/88.0',
@@ -14,6 +14,7 @@ headers = {
 }
 
 def get_code(link, mode="mp3"):
+    print("Downloading...")
     url = "https://yt1s.com/api/ajaxSearch/index"
     payload = {
         "q":link,
@@ -39,11 +40,22 @@ def download_mp3(link):
 
     req = requests.get(download)
     open(title + ".mp3", "wb").write(req.content)
-    print("Downloaded...")
 
 def download_mp4(link):
-    # to-do
-    pass
+    code, vid = get_code(link, "mp4")
+
+    url = "https://yt1s.com/api/ajaxConvert/convert"
+    payload = {
+        "vid": vid,
+        "k": code,
+    }
+
+    r = requests.post(url, data=payload, headers=headers)
+    title = r.json()["title"]
+    download = r.json()["dlink"]
+
+    req = requests.get(download)
+    open(title + ".mp4", "wb").write(req.content)
 
 if __name__ == '__main__':
     while True:
@@ -52,8 +64,10 @@ if __name__ == '__main__':
             exit(0)
 
         choose = input("1 for MP3\n2 for MP4\n")
+        start = time.time()
         if choose == "1":
             download_mp3(song)
         elif choose == "2":
-            download_mp4()
+            download_mp4(song)
+        print(f"Downloaded in {round(time.time() - start)} seconds")
 
