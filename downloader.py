@@ -81,6 +81,7 @@ def download_part_playlist(url):
         if response.json()["progress"] != None:
             progress = int(response.json()["progress"])/10
             sys.stdout.write('\r')
+            sys.stdout.flush()
             sys.stdout.write(f"Download in corso... {progress}%")
         response = requests.request("GET", url[1], headers=headers)
         time.sleep(1)
@@ -99,7 +100,7 @@ def download_playlist(response):
 
 
 if __name__ == '__main__':
-    print("SOFTWARE DI STEFANO ZARRO, FATTO CON IL ❤ PER FEDERICO MIGNONE\n\n")
+    print("SOFTWARE by stepzar\n\n")
     while True:
         song = str(input("Inserisci link di YouTube (Video singolo o Playlist): "))
         if song == "" or not song.startswith("https://youtube.com"):
@@ -116,4 +117,5 @@ if __name__ == '__main__':
             download_playlist(r)
 
         sys.stdout.write('\r')
+        sys.stdout.flush()
         sys.stdout.write(f"Scaricata in {round(time.time() - start)} secondi...\n")
